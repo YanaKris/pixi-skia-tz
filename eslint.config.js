@@ -21,7 +21,6 @@ export default tseslint.config(
   prettier,
   {
     rules: {
-
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
@@ -29,7 +28,6 @@ export default tseslint.config(
     },
   },
   {
-
     files: ['scripts/**/*.mjs'],
     languageOptions: {
       globals: { process: 'readonly', console: 'readonly' },

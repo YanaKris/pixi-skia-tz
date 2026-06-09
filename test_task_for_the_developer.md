@@ -10,55 +10,54 @@
 
 \- Написать TypeScript-обертку (интерфейс) для Skia, которая принимает объект типа \`PIXI.Container\`.  
 \- На вход подается контейнер Pixi с различными дочерними элементами (\`PIXI.DisplayObject\`), каждый из которых может иметь свои трансформации:  
-  \- Сдвиг (translate).  
-  \- Поворот (rotate).  
-  \- Масштабирование (scale).  
+ \- Сдвиг (translate).  
+ \- Поворот (rotate).  
+ \- Масштабирование (scale).  
 \- Минимальный набор поддерживаемых объектов:  
-  \- \`PIXI.Graphics\` с методами \`drawShape\`, \`moveTo\`, \`lineTo\`, \`drawRect\`.  
-  \- \`PIXI.Sprite\` (png картинки).
+ \- \`PIXI.Graphics\` с методами \`drawShape\`, \`moveTo\`, \`lineTo\`, \`drawRect\`.  
+ \- \`PIXI.Sprite\` (png картинки).
 
 Пример страницы:![][image1]
 
 Пример Pixi.Container (может быть любой):
 
-     
-   `const mainContainer = new PIXI.Container()`  
-   `const subContainer = new PIXI.Container()`  
-   `const g1 = new PIXI.Graphics()`  
-   `const g2 = new PIXI.Graphics()`  
-   `const g3 = new PIXI.Graphics()`  
-   `const g4 = new PIXI.Graphics()`
+`const mainContainer = new PIXI.Container()`  
+ `const subContainer = new PIXI.Container()`  
+ `const g1 = new PIXI.Graphics()`  
+ `const g2 = new PIXI.Graphics()`  
+ `const g3 = new PIXI.Graphics()`  
+ `const g4 = new PIXI.Graphics()`
 
-   `g1.beginFill('#ff0000').drawEllipse(0, 0, 200, 100).endFill()`  
-   `g1.position.set(200, 100)`  
-   `g1.angle = 30`  
-   `g1.on('pointerdown', () => {`  
-     `console.log('g1 pointerdown!')`  
-   `})`
+`g1.beginFill('#ff0000').drawEllipse(0, 0, 200, 100).endFill()`  
+ `g1.position.set(200, 100)`  
+ `g1.angle = 30`  
+ `g1.on('pointerdown', () => {`  
+ `console.log('g1 pointerdown!')`  
+ `})`
 
-   `g2.beginFill('#0000ff').drawRect(-50, -75, 100, 150).endFill()`  
-   `g2.position.set(120, 60)`  
-   `g2.angle = 15`  
-   `g2.scale.set(1.5, 1.7)`  
-   `g2.on('pointerup', () => {`  
-     `console.log('g2 pointerup!')`  
-   `})`
+`g2.beginFill('#0000ff').drawRect(-50, -75, 100, 150).endFill()`  
+ `g2.position.set(120, 60)`  
+ `g2.angle = 15`  
+ `g2.scale.set(1.5, 1.7)`  
+ `g2.on('pointerup', () => {`  
+ `console.log('g2 pointerup!')`  
+ `})`
 
-   `g3.lineStyle(10, '#ffffff', 1)`  
-     `.moveTo(0, 0).lineTo(150, 100)`  
-   `g3.angle = -20`
+`g3.lineStyle(10, '#ffffff', 1)`  
+ `.moveTo(0, 0).lineTo(150, 100)`  
+ `g3.angle = -20`
 
-   `g4.lineStyle(10, '#ffff00', 1)`  
-     `.moveTo(0, 70).lineTo(150, -30)`  
-   `g4.angle = 20`
+`g4.lineStyle(10, '#ffff00', 1)`  
+ `.moveTo(0, 70).lineTo(150, -30)`  
+ `g4.angle = 20`
 
-   `subContainer.position.set(75, 50)`  
-   `subContainer.addChild(g3, g4)`  
-   `mainContainer.addChild(subContainer, g1, g2)`
+`subContainer.position.set(75, 50)`  
+ `subContainer.addChild(g3, g4)`  
+ `mainContainer.addChild(subContainer, g1, g2)`
 
-   `const convertPixiContainerToSkia = (container: PIXI.Container) => {`  
-     `// Реализация отрисовки`  
-   `}`
+`const convertPixiContainerToSkia = (container: PIXI.Container) => {`  
+ `// Реализация отрисовки`  
+ `}`
 
 ### **2\. Экспорт в PDF:**
 
@@ -70,10 +69,10 @@
 
 \- Добавить поддержку событий \`pointerDown\` и \`pointerUp\` для объектов \`PIXI.DisplayObject\`. События должны работать корректно на обоих канвасах.  
 \- Реализовать простую интерактивность для тестирования приложения (на выбор одно из двух):  
-  \- **Кнопка:**  
-    \- "Сгенерировать случайную линию/фигуру". Эта кнопка добавляет случайные фигуры (\`PIXI.Graphics\`) или линии в текущий Pixi-контейнер.  
-  \- **Прокрутка контейнеров:**  
-    \- Добавить функционал для переключения между заранее подготовленными \`PIXI.Container\` с различным содержимым (по таймеру \`setTimeout\` или так же через кнопки).
+ \- **Кнопка:**  
+ \- "Сгенерировать случайную линию/фигуру". Эта кнопка добавляет случайные фигуры (\`PIXI.Graphics\`) или линии в текущий Pixi-контейнер.  
+ \- **Прокрутка контейнеров:**  
+ \- Добавить функционал для переключения между заранее подготовленными \`PIXI.Container\` с различным содержимым (по таймеру \`setTimeout\` или так же через кнопки).
 
 ### **Технические требования:**
 
@@ -84,9 +83,9 @@
 ## **Дополнительные требования:**
 
 1\. В приложении должен быть реализован простой UI (например, с использованием HTML/CSS), чтобы тестировать функции:  
-   \- Кнопки управления.  
-   \- Просмотр текущей сцены.  
-   \- Экспорт в PDF.  
+ \- Кнопки управления.  
+ \- Просмотр текущей сцены.  
+ \- Экспорт в PDF.  
 2\. Приложение должно быть легко запускаемым (например, через \`npm run\`) и содержать подробную инструкцию по запуску.  
 3\. На всех этапах можно использовать ChatGPT для ускорения поиска документации и примеров кода.
 
@@ -102,4 +101,4 @@
 
 Проект загруженный на github \+ работающая программа запущенная на любом бесплатном хостинге \+ pdf файл сгенерированный с помощью skia с векторной графикой. Выполненные работы принимаются до 15-го июня включительно по ссылке [https://forms.yandex.ru/u/6a0db569eb6146662ae0fb45](https://forms.yandex.ru/u/6a0db569eb6146662ae0fb45)
 
-Контакт для связи @sboard\_support\_bot (Telegram)
+Контакт для связи @sboard_support_bot (Telegram)
