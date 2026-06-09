@@ -1,4 +1,4 @@
-import type { CanvasKit, Paint } from 'canvaskit-wasm';
+import type { CanvasKit, Paint, StrokeCap, StrokeJoin } from 'canvaskit-wasm';
 import { toRgba01 } from './color';
 
 export interface FillStyleLike {
@@ -14,13 +14,13 @@ export interface LineStyleLike {
   join?: string;
 }
 
-function resolveCap(ck: CanvasKit, cap?: string): CanvasKit['StrokeCap']['Butt'] {
+function resolveCap(ck: CanvasKit, cap?: string): StrokeCap {
   if (cap === 'round') return ck.StrokeCap.Round;
   if (cap === 'square') return ck.StrokeCap.Square;
   return ck.StrokeCap.Butt;
 }
 
-function resolveJoin(ck: CanvasKit, join?: string): CanvasKit['StrokeJoin']['Miter'] {
+function resolveJoin(ck: CanvasKit, join?: string): StrokeJoin {
   if (join === 'round') return ck.StrokeJoin.Round;
   if (join === 'bevel') return ck.StrokeJoin.Bevel;
   return ck.StrokeJoin.Miter;

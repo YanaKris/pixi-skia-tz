@@ -10,6 +10,12 @@ describe('buildFillPaint', () => {
     expect(paint.color).toEqual([1, 0, 0, 0.4]); // 0.8 * 0.5
     expect(paint.antiAlias).toBe(true);
   });
+
+  it('clamps the alpha * worldAlpha product to a maximum of 1', () => {
+    const ck = makeMockCanvasKit();
+    const paint = buildFillPaint(ck, { color: 0xffffff, alpha: 1 }, 2) as unknown as MockPaint;
+    expect(paint.color?.[3]).toBe(1); // 1 * 2 → зажато в 1
+  });
 });
 
 describe('buildStrokePaint', () => {
