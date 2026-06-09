@@ -1,3 +1,4 @@
+/** Ссылки на ключевые DOM-элементы интерфейса. */
 export interface LayoutRefs {
   pixiCanvas: HTMLCanvasElement;
   skiaCanvas: HTMLCanvasElement;
@@ -7,7 +8,7 @@ export interface LayoutRefs {
 }
 
 function canvas(id: string, width: number, height: number): HTMLCanvasElement {
-  const c = document.createElement("canvas");
+  const c = document.createElement('canvas');
   c.id = id;
   c.width = width;
   c.height = height;
@@ -15,25 +16,29 @@ function canvas(id: string, width: number, height: number): HTMLCanvasElement {
 }
 
 function button(label: string): HTMLButtonElement {
-  const b = document.createElement("button");
-  b.type = "button";
+  const b = document.createElement('button');
+  b.type = 'button';
   b.textContent = label;
   return b;
 }
 
+/**
+ * Строит разметку приложения: панель кнопок + два канваса (Pixi и Skia) рядом,
+ * чтобы сравнивать рендер. Возвращает ссылки на элементы для дальнейшей привязки.
+ */
 export function mountLayout(parent: HTMLElement): LayoutRefs {
-  const controls = document.createElement("div");
-  controls.className = "controls";
+  const controls = document.createElement('div');
+  controls.className = 'controls';
 
-  const addShapeBtn = button("Случайная фигура");
-  const switchSceneBtn = button("Следующая сцена");
-  const exportPdfBtn = button("Экспорт в PDF");
+  const addShapeBtn = button('Случайная фигура');
+  const switchSceneBtn = button('Следующая сцена');
+  const exportPdfBtn = button('Экспорт в PDF');
   controls.append(addShapeBtn, switchSceneBtn, exportPdfBtn);
 
-  const stage = document.createElement("div");
-  stage.className = "stage";
-  const pixiCanvas = canvas("pixi-canvas", 800, 600);
-  const skiaCanvas = canvas("skia-canvas", 800, 600);
+  const stage = document.createElement('div');
+  stage.className = 'stage';
+  const pixiCanvas = canvas('pixi-canvas', 800, 600);
+  const skiaCanvas = canvas('skia-canvas', 800, 600);
   stage.append(pixiCanvas, skiaCanvas);
 
   parent.append(controls, stage);
