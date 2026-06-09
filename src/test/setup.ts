@@ -44,9 +44,7 @@ function makeStub2DContext(): CanvasRenderingContext2D {
   }) as unknown as CanvasRenderingContext2D;
 }
 
-HTMLCanvasElement.prototype.getContext = function (
-  contextId: string
-): RenderingContext | null {
+HTMLCanvasElement.prototype.getContext = function (contextId: string): RenderingContext | null {
   if (contextId === '2d') {
     return makeStub2DContext() as unknown as RenderingContext;
   }
