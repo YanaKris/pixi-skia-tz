@@ -18,6 +18,14 @@ describe('toRgba01', () => {
     expect(toRgba01(0xffffff, 1)).toEqual([1, 1, 1, 1]);
   });
 
+  it('black 0x000000, alpha 1 → [0,0,0,1]', () => {
+    expect(toRgba01(0x000000, 1)).toEqual([0, 0, 0, 1]);
+  });
+
+  it('ignores bits above 24 bits (0xAARRGGBB → RRGGBB)', () => {
+    expect(toRgba01(0xff112233, 1)).toEqual(toRgba01(0x112233, 1));
+  });
+
   it('clamps alpha to a maximum of 1', () => {
     expect(toRgba01(0xffffff, 2)[3]).toBe(1);
   });
