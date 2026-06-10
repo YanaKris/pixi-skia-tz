@@ -44,6 +44,16 @@ describe('buildStrokePaint', () => {
     expect(paint.strokeJoin).toBe(ck.StrokeJoin.Miter);
   });
 
+  it('join=round', () => {
+    const ck = makeMockCanvasKit();
+    const paint = buildStrokePaint(
+      ck,
+      { color: 0x000000, alpha: 1, width: 1, join: 'round' },
+      1,
+    ) as unknown as MockPaint;
+    expect(paint.strokeJoin).toBe(ck.StrokeJoin.Round);
+  });
+
   it('cap=square, join=bevel', () => {
     const ck = makeMockCanvasKit();
     const paint = buildStrokePaint(
