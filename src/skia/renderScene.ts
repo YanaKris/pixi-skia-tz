@@ -1,12 +1,18 @@
 import type { CanvasKit, Canvas, Paint, Path } from 'canvaskit-wasm';
-import { Container, Graphics, DisplayObject } from 'pixi.js-legacy';
+import { Container, Graphics, Sprite, DisplayObject } from 'pixi.js-legacy';
 import { toSkMatrix } from './converters/matrix';
 import { extractGraphicsParts, buildPath } from './converters/graphics';
 import { buildFillPaint, buildStrokePaint } from './converters/style';
+import { SpriteImageCache, drawSprite } from './converters/sprite';
 
 const tempParent = new Container();
 
-export function renderSceneToSkCanvas(ck: CanvasKit, canvas: Canvas, root: Container): void {
+export function renderSceneToSkCanvas(
+  ck: CanvasKit,
+  canvas: Canvas,
+  root: Container,
+  spriteCache?: SpriteImageCache,
+): void {
   const cachedParent = root.parent;
   root.parent = tempParent;
   try {
@@ -15,20 +21,27 @@ export function renderSceneToSkCanvas(ck: CanvasKit, canvas: Canvas, root: Conta
     root.parent = cachedParent;
   }
 
-  renderNode(ck, canvas, root);
+  renderNode(ck, canvas, root, spriteCache);
 }
 
-function renderNode(ck: CanvasKit, canvas: Canvas, node: DisplayObject): void {
+function renderNode(
+  ck: CanvasKit,
+  canvas: Canvas,
+  node: DisplayObject,
+  spriteCache?: SpriteImageCache,
+): void {
   if (!node.visible || !node.renderable || node.worldAlpha <= 0) return;
 
   if (node instanceof Graphics) {
     drawGraphics(ck, canvas, node);
+  } else if (node instanceof Sprite && spriteCache) {
+    drawSprite(ck, canvas, node, spriteCache);
   }
 
   const children = (node as Container).children;
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      renderNode(ck, canvas, children[i]!);
+      renderNode(ck, canvas, children[i]!, spriteCache);
     }
   }
 }
