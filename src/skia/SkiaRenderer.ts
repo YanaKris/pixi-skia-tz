@@ -1,8 +1,11 @@
 import type { CanvasKit, Surface } from 'canvaskit-wasm';
 import { Container } from 'pixi.js-legacy';
 import { renderSceneToSkCanvas } from './renderScene';
+import { SpriteImageCache } from './converters/sprite';
 
 export class SkiaRenderer {
+  private readonly spriteCache = new SpriteImageCache();
+
   private readonly ck: CanvasKit;
   private readonly surface: Surface;
 
@@ -11,14 +14,19 @@ export class SkiaRenderer {
     this.surface = surface;
   }
 
+  loadSprite(uid: number, url: string): Promise<boolean> {
+    return this.spriteCache.loadFromUrl(this.ck, uid, url);
+  }
+
   render(root: Container): void {
     const canvas = this.surface.getCanvas();
     canvas.clear(this.ck.TRANSPARENT);
-    renderSceneToSkCanvas(this.ck, canvas, root);
+    renderSceneToSkCanvas(this.ck, canvas, root, this.spriteCache);
     this.surface.flush();
   }
 
   dispose(): void {
+    this.spriteCache.dispose();
     this.surface.delete();
   }
 }

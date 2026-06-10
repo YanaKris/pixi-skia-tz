@@ -4,6 +4,7 @@ import { toSkMatrix } from './matrix';
 
 export class SpriteImageCache {
   private readonly images = new Map<number, Image>();
+  private readonly loading = new Map<number, Promise<boolean>>();
 
   has(uid: number): boolean {
     return this.images.has(uid);
@@ -17,14 +18,28 @@ export class SpriteImageCache {
     this.images.set(uid, image);
   }
 
-  async loadFromUrl(ck: CanvasKit, uid: number, url: string): Promise<boolean> {
-    if (this.images.has(uid)) return true;
-    const res = await fetch(url);
-    const bytes = new Uint8Array(await res.arrayBuffer());
-    const image = ck.MakeImageFromEncoded(bytes);
-    if (!image) return false;
-    this.images.set(uid, image);
-    return true;
+  loadFromUrl(ck: CanvasKit, uid: number, url: string): Promise<boolean> {
+    if (this.images.has(uid)) return Promise.resolve(true);
+    const inFlight = this.loading.get(uid);
+    if (inFlight) return inFlight;
+
+    const promise = (async (): Promise<boolean> => {
+      try {
+        const res = await fetch(url);
+        const bytes = new Uint8Array(await res.arrayBuffer());
+        const image = ck.MakeImageFromEncoded(bytes);
+        if (!image) return false;
+        this.images.set(uid, image);
+        return true;
+      } catch {
+        return false;
+      } finally {
+        this.loading.delete(uid);
+      }
+    })();
+
+    this.loading.set(uid, promise);
+    return promise;
   }
 
   dispose(): void {
@@ -33,20 +48,31 @@ export class SpriteImageCache {
   }
 }
 
-export function drawSprite(ck: CanvasKit, canvas: Canvas, sprite: Sprite, cache: SpriteImageCache): void {
-  const uid = sprite.texture.baseTexture.uid;
-  const image = cache.get(uid);
+export function drawSprite(
+  ck: CanvasKit,
+  canvas: Canvas,
+  sprite: Sprite,
+  cache: SpriteImageCache,
+): void {
+  const tex = sprite.texture;
+  const image = cache.get(tex.baseTexture.uid);
   if (!image) return;
 
-  const w = sprite.texture.width;
-  const h = sprite.texture.height;
-  const ax = sprite.anchor.x * w;
-  const ay = sprite.anchor.y * h;
+  const frame = tex.frame;
+  const ow = tex.orig.width;
+  const oh = tex.orig.height;
+  const ax = sprite.anchor.x * ow;
+  const ay = sprite.anchor.y * oh;
 
   canvas.save();
   canvas.concat(toSkMatrix(sprite.worldTransform));
   const paint = new ck.Paint();
-  canvas.drawImageRect(image, ck.LTRBRect(0, 0, w, h), ck.LTRBRect(-ax, -ay, w - ax, h - ay), paint);
+  canvas.drawImageRect(
+    image,
+    ck.LTRBRect(frame.x, frame.y, frame.x + frame.width, frame.y + frame.height),
+    ck.LTRBRect(0 - ax, 0 - ay, ow - ax, oh - ay),
+    paint,
+  );
   paint.delete();
   canvas.restore();
 }

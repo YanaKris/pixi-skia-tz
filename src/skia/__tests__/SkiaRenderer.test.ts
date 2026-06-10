@@ -1,8 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { Container, Graphics } from 'pixi.js-legacy';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { Container, Graphics, Sprite, Texture } from 'pixi.js-legacy';
 import type { Surface } from 'canvaskit-wasm';
 import { makeMockCanvasKit, makeRecordingCanvas, makeMockSurface } from './mockCanvasKit';
 import { SkiaRenderer, createOnscreenRenderer } from '../SkiaRenderer';
+
+afterEach(() => vi.unstubAllGlobals());
 
 describe('SkiaRenderer (unit, мок surface)', () => {
   it('render: очищает канвас, рисует сцену и делает flush', () => {
@@ -40,6 +42,24 @@ describe('SkiaRenderer (unit, мок surface)', () => {
     renderer.render(root);
     renderer.render(root);
     expect(canvas.ops.filter((o) => o === 'clear')).toHaveLength(2);
+  });
+
+  it('loadSprite + render рисует спрайт из внутреннего кеша', async () => {
+    const ck = makeMockCanvasKit();
+    const canvas = makeRecordingCanvas();
+    const surface = makeMockSurface(canvas);
+    const renderer = new SkiaRenderer(ck, surface as unknown as Surface);
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ arrayBuffer: async () => new ArrayBuffer(16) }),
+    );
+    const sprite = new Sprite(Texture.WHITE);
+    await renderer.loadSprite(sprite.texture.baseTexture.uid, 'a.png');
+
+    const root = new Container();
+    root.addChild(sprite);
+    renderer.render(root);
+    expect(canvas.ops).toContain('drawImageRect');
   });
 });
 

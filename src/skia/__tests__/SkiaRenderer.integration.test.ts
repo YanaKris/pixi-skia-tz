@@ -31,7 +31,7 @@ describe('SkiaRenderer (интеграция, реальный CanvasKit)', () =
     surface.delete();
   });
 
-    it('renders pixels correctly: inside the shape is opaque, outside is transparent', async () => {
+  it('renders pixels correctly: inside the shape is opaque, outside is transparent', async () => {
     const ck = await loadTestCanvasKit();
     const surface = ck.MakeSurface(100, 100)!;
     const renderer = new SkiaRenderer(ck, surface);
