@@ -1,6 +1,5 @@
 function makeStub2DContext(): CanvasRenderingContext2D {
   const noop = (): void => {};
-
   const base: Record<string, unknown> = {
     fillStyle: '#000000',
     strokeStyle: '#000000',
@@ -44,10 +43,23 @@ function makeStub2DContext(): CanvasRenderingContext2D {
   }) as unknown as CanvasRenderingContext2D;
 }
 
-HTMLCanvasElement.prototype.getContext = function (contextId: string): RenderingContext | null {
-  if (contextId === '2d') {
-    return makeStub2DContext() as unknown as RenderingContext;
-  }
+if (typeof HTMLCanvasElement !== 'undefined') {
+  const originalGetContext = HTMLCanvasElement.prototype.getContext;
 
-  return null;
-} as typeof HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext = function patchedGetContext(
+    this: HTMLCanvasElement,
+    contextId: string,
+    ...rest: unknown[]
+  ): RenderingContext | null {
+    const native = originalGetContext
+      ? (originalGetContext as (...a: unknown[]) => RenderingContext | null).call(
+          this,
+          contextId,
+          ...rest,
+        )
+      : null;
+    if (native) return native;
+    if (contextId === '2d') return makeStub2DContext() as unknown as RenderingContext;
+    return null;
+  } as typeof HTMLCanvasElement.prototype.getContext;
+}

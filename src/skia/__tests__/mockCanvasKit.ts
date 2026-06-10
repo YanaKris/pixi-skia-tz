@@ -87,17 +87,18 @@ export function makeMockCanvasKit(): CanvasKit {
     Color4f: (r: number, g: number, b: number, a: number): number[] => [r, g, b, a],
     LTRBRect: (l: number, t: number, r: number, b: number): unknown => ['LTRB', l, t, r, b],
     RRectXY: (rect: unknown, rx: number, ry: number): unknown => ['RRectXY', rect, rx, ry],
+    TRANSPARENT: [0, 0, 0, 0],
   };
   return ck as unknown as CanvasKit;
 }
 
-/** Записывающий SkCanvas: фиксирует последовательность операций обхода (для T8). */
 export interface RecordingCanvas {
   ops: string[];
   calls: MockPathOp[];
   save(): void;
   restore(): void;
   concat(m: number[]): void;
+  clear(color: number[]): void;
   drawPath(path: unknown, paint: unknown): void;
   drawImageRect(img: unknown, src: unknown, dst: unknown, paint: unknown): void;
 }
@@ -115,7 +116,31 @@ export function makeRecordingCanvas(): RecordingCanvas {
     save: () => rec('save'),
     restore: () => rec('restore'),
     concat: (m) => rec('concat', m),
+    clear: (color) => rec('clear', color),
     drawPath: (path, paint) => rec('drawPath', path, paint),
     drawImageRect: (img, src, dst, paint) => rec('drawImageRect', img, src, dst, paint),
   };
+}
+
+export interface MockSurface {
+  getCanvas(): RecordingCanvas;
+  flush(): void;
+  delete(): void;
+  flushed: boolean;
+  deleted: boolean;
+}
+
+export function makeMockSurface(canvas: RecordingCanvas): MockSurface {
+  const s: MockSurface = {
+    getCanvas: () => canvas,
+    flush(): void {
+      s.flushed = true;
+    },
+    delete(): void {
+      s.deleted = true;
+    },
+    flushed: false,
+    deleted: false,
+  };
+  return s;
 }
