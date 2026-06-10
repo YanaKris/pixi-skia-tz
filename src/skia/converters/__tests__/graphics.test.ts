@@ -77,4 +77,14 @@ describe('buildPath', () => {
     expect(path.ops[0]).toEqual({ op: 'moveTo', args: [0, 0] });
     expect(path.ops.some((o) => o.op === 'close')).toBe(true);
   });
+
+  it('RREC (drawRoundedRect) → addRRect с RRectXY(LTRB, r, r)', () => {
+    const ck = makeMockCanvasKit();
+    const g = new Graphics().beginFill(0).drawRoundedRect(0, 0, 100, 50, 10).endFill();
+    const shape = extractGraphicsParts(g)[0]!.shape;
+    const path = buildPath(ck, shape) as unknown as MockPath;
+    expect(path.ops).toEqual([
+      { op: 'addRRect', args: [['RRectXY', ['LTRB', 0, 0, 100, 50], 10, 10]] },
+    ]);
+  });
 });
