@@ -63,13 +63,13 @@ export function buildPath(ck: CanvasKit, shape: ShapeLike): Path {
       );
       break;
     case SHAPES.POLY: {
-      const pts = (shape as { points?: number[] }).points ?? [];
+      const pts = s.points ?? [];
       if (pts.length >= 2) {
         path.moveTo(pts[0]!, pts[1]!);
         for (let i = 2; i + 1 < pts.length; i += 2) {
           path.lineTo(pts[i]!, pts[i + 1]!);
         }
-        if ((shape as { closeStroke?: boolean }).closeStroke) path.close();
+        if (s.closeStroke) path.close();
       }
       break;
     }
