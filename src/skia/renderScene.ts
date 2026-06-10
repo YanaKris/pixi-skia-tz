@@ -9,14 +9,17 @@ const tempParent = new Container();
 export function renderSceneToSkCanvas(ck: CanvasKit, canvas: Canvas, root: Container): void {
   const cachedParent = root.parent;
   root.parent = tempParent;
-  root.updateTransform();
-  root.parent = cachedParent;
+  try {
+    root.updateTransform();
+  } finally {
+    root.parent = cachedParent;
+  }
 
   renderNode(ck, canvas, root);
 }
 
 function renderNode(ck: CanvasKit, canvas: Canvas, node: DisplayObject): void {
-  if (!node.visible || node.worldAlpha <= 0) return;
+  if (!node.visible || !node.renderable || node.worldAlpha <= 0) return;
 
   if (node instanceof Graphics) {
     drawGraphics(ck, canvas, node);
