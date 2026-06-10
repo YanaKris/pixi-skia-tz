@@ -88,8 +88,25 @@ export function makeMockCanvasKit(): CanvasKit {
     LTRBRect: (l: number, t: number, r: number, b: number): unknown => ['LTRB', l, t, r, b],
     RRectXY: (rect: unknown, rx: number, ry: number): unknown => ['RRectXY', rect, rx, ry],
     TRANSPARENT: [0, 0, 0, 0],
+    MakeImageFromEncoded: (bytes: Uint8Array | null): MockImage | null =>
+      bytes && bytes.length > 0 ? makeMockImage() : null,
   };
   return ck as unknown as CanvasKit;
+}
+
+export interface MockImage {
+  delete(): void;
+  deleted: boolean;
+}
+
+export function makeMockImage(): MockImage {
+  const img: MockImage = {
+    delete(): void {
+      img.deleted = true;
+    },
+    deleted: false,
+  };
+  return img;
 }
 
 export interface RecordingCanvas {

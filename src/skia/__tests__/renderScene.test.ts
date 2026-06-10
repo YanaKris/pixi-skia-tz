@@ -1,13 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { Container, Graphics } from 'pixi.js-legacy';
+import { Container, Graphics, Sprite, Texture } from 'pixi.js-legacy';
 import type { Canvas } from 'canvaskit-wasm';
 import {
   makeMockCanvasKit,
   makeRecordingCanvas,
+  makeMockImage,
   type MockPaint,
   type MockPath,
 } from './mockCanvasKit';
 import { renderSceneToSkCanvas } from '../renderScene';
+import { SpriteImageCache } from '../converters/sprite';
 
 describe('renderSceneToSkCanvas', () => {
   it('for a visible leaf: save → concat(worldMatrix) → drawPath → restore', () => {
@@ -25,6 +27,7 @@ describe('renderSceneToSkCanvas', () => {
     expect(canvas.ops).toContain('drawPath');
     const concat = canvas.calls.find((c) => c.op === 'concat');
     expect(concat?.args[0]).toEqual([1, 0, 20, 0, 1, 30, 0, 0, 1]);
+    // баланс save/restore
     expect(canvas.ops.filter((o) => o === 'save')).toHaveLength(1);
     expect(canvas.ops.filter((o) => o === 'restore')).toHaveLength(1);
   });
@@ -81,7 +84,7 @@ describe('renderSceneToSkCanvas', () => {
     renderSceneToSkCanvas(ck, canvas as unknown as Canvas, root);
     const draw = canvas.calls.find((c) => c.op === 'drawPath');
     const paint = draw?.args[1] as unknown as MockPaint;
-    expect(paint.color?.[3]).toBeCloseTo(0.5, 6);
+    expect(paint.color?.[3]).toBeCloseTo(0.5, 6); // fillAlpha(1) * worldAlpha(0.5)
   });
 
   it('renders both fill and stroke using two drawPath calls for a shape with fill and line', () => {
@@ -109,6 +112,29 @@ describe('renderSceneToSkCanvas', () => {
     const paint = draw?.args[1] as unknown as MockPaint;
     expect(path.deleted).toBe(true);
     expect(paint.deleted).toBe(true);
+  });
+
+  it('renders a Sprite via spriteCache (drawImageRect)', () => {
+    const ck = makeMockCanvasKit();
+    const canvas = makeRecordingCanvas();
+    const root = new Container();
+    const sprite = new Sprite(Texture.WHITE);
+    root.addChild(sprite);
+    const cache = new SpriteImageCache();
+    cache.set(sprite.texture.baseTexture.uid, makeMockImage() as never);
+
+    renderSceneToSkCanvas(ck, canvas as unknown as Canvas, root, cache);
+    expect(canvas.ops).toContain('drawImageRect');
+  });
+
+  it('skips Sprite rendering when spriteCache is not provided (no drawImageRect)', () => {
+    const ck = makeMockCanvasKit();
+    const canvas = makeRecordingCanvas();
+    const root = new Container();
+    root.addChild(new Sprite(Texture.WHITE));
+
+    renderSceneToSkCanvas(ck, canvas as unknown as Canvas, root);
+    expect(canvas.ops).not.toContain('drawImageRect');
   });
 
   it('multiplies worldAlpha through the hierarchy: root(0.5) → sub(0.5) → g = 0.25', () => {

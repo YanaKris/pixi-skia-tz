@@ -51,15 +51,24 @@ if (typeof HTMLCanvasElement !== 'undefined') {
     contextId: string,
     ...rest: unknown[]
   ): RenderingContext | null {
-    const native = originalGetContext
-      ? (originalGetContext as (...a: unknown[]) => RenderingContext | null).call(
-          this,
-          contextId,
-          ...rest,
-        )
-      : null;
-    if (native) return native;
-    if (contextId === '2d') return makeStub2DContext() as unknown as RenderingContext;
+    const isJsdom = typeof navigator !== 'undefined' && navigator.userAgent.includes('jsdom');
+
+    if (!isJsdom && originalGetContext) {
+      const native = (originalGetContext as (...args: unknown[]) => RenderingContext | null).call(
+        this,
+        contextId,
+        ...rest,
+      );
+
+      if (native) {
+        return native;
+      }
+    }
+
+    if (contextId === '2d') {
+      return makeStub2DContext() as unknown as RenderingContext;
+    }
+
     return null;
   } as typeof HTMLCanvasElement.prototype.getContext;
 }
