@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Container, Graphics } from 'pixi.js-legacy';
+import type { Surface } from 'canvaskit-wasm';
 import { makeMockCanvasKit, makeRecordingCanvas, makeMockSurface } from './mockCanvasKit';
 import { SkiaRenderer, createOnscreenRenderer } from '../SkiaRenderer';
 
@@ -8,7 +9,7 @@ describe('SkiaRenderer (unit, мок surface)', () => {
     const ck = makeMockCanvasKit();
     const canvas = makeRecordingCanvas();
     const surface = makeMockSurface(canvas);
-    const renderer = new SkiaRenderer(ck, surface as never);
+    const renderer = new SkiaRenderer(ck, surface as unknown as Surface);
 
     const root = new Container();
     root.addChild(new Graphics().beginFill(0xff0000).drawRect(0, 0, 10, 10).endFill());
@@ -23,7 +24,7 @@ describe('SkiaRenderer (unit, мок surface)', () => {
   it('dispose освобождает surface', () => {
     const ck = makeMockCanvasKit();
     const surface = makeMockSurface(makeRecordingCanvas());
-    const renderer = new SkiaRenderer(ck, surface as never);
+    const renderer = new SkiaRenderer(ck, surface as unknown as Surface);
     renderer.dispose();
     expect(surface.deleted).toBe(true);
   });
@@ -32,7 +33,7 @@ describe('SkiaRenderer (unit, мок surface)', () => {
     const ck = makeMockCanvasKit();
     const canvas = makeRecordingCanvas();
     const surface = makeMockSurface(canvas);
-    const renderer = new SkiaRenderer(ck, surface as never);
+    const renderer = new SkiaRenderer(ck, surface as unknown as Surface);
     const root = new Container();
     root.addChild(new Graphics().beginFill(0x00ff00).drawRect(0, 0, 5, 5).endFill());
 
