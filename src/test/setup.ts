@@ -72,3 +72,8 @@ if (typeof HTMLCanvasElement !== 'undefined') {
     return null;
   } as typeof HTMLCanvasElement.prototype.getContext;
 }
+
+if (typeof globalThis.PointerEvent === 'undefined' && typeof MouseEvent !== 'undefined') {
+  class PointerEventPolyfill extends MouseEvent {}
+  (globalThis as { PointerEvent?: unknown }).PointerEvent = PointerEventPolyfill;
+}
