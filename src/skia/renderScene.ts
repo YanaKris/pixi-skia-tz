@@ -4,8 +4,7 @@ import { toSkMatrix } from './converters/matrix';
 import { extractGraphicsParts, buildPath } from './converters/graphics';
 import { buildFillPaint, buildStrokePaint } from './converters/style';
 import { SpriteImageCache, drawSprite } from './converters/sprite';
-
-const tempParent = new Container();
+import { updateStandaloneTransform } from './sceneTransform';
 
 export function renderSceneToSkCanvas(
   ck: CanvasKit,
@@ -13,13 +12,7 @@ export function renderSceneToSkCanvas(
   root: Container,
   spriteCache?: SpriteImageCache,
 ): void {
-  const cachedParent = root.parent;
-  root.parent = tempParent;
-  try {
-    root.updateTransform();
-  } finally {
-    root.parent = cachedParent;
-  }
+  updateStandaloneTransform(root);
 
   renderNode(ck, canvas, root, spriteCache);
 }
