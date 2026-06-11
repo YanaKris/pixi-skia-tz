@@ -1,4 +1,3 @@
-/** Ссылки на ключевые DOM-элементы интерфейса. */
 export interface LayoutRefs {
   pixiCanvas: HTMLCanvasElement;
   skiaCanvas: HTMLCanvasElement;
@@ -22,10 +21,6 @@ function button(label: string): HTMLButtonElement {
   return b;
 }
 
-/**
- * Строит разметку приложения: панель кнопок + два канваса (Pixi и Skia) рядом,
- * чтобы сравнивать рендер. Возвращает ссылки на элементы для дальнейшей привязки.
- */
 export function mountLayout(parent: HTMLElement): LayoutRefs {
   const controls = document.createElement('div');
   controls.className = 'controls';
