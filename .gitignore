@@ -10,6 +10,10 @@ build-skia/skia/
 build-skia/depot_tools/
 *.wasm.map
 
+# CanvasKit для рантайма: кладётся скриптом copy:wasm (сток) или вручную из build-skia/ (кастом с PDF)
+public/canvaskit.js
+public/canvaskit.wasm
+
 # IDE / ОС
 .idea/
 .vscode/

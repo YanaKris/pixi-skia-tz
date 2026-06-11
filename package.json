@@ -8,7 +8,10 @@
     "node": ">=20"
   },
   "scripts": {
+    "copy:wasm": "node scripts/copy-wasm.mjs",
+    "predev": "npm run copy:wasm",
     "dev": "vite",
+    "prebuild": "npm run copy:wasm",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
