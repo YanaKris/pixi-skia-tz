@@ -1,24 +1,24 @@
-# Logs
-logs
+# Зависимости и сборка
+node_modules/
+dist/
+.vite/
+coverage/
+*.tsbuildinfo
+
+# Артефакты сборки Skia→WASM (тяжёлые бинарники собираются отдельно)
+build-skia/skia/
+build-skia/depot_tools/
+*.wasm.map
+
+# CanvasKit для рантайма: кладётся скриптом copy:wasm (сток) или вручную из build-skia/ (кастом с PDF)
+public/canvaskit.js
+public/canvaskit.wasm
+
+# IDE / ОС
+.idea/
+.vscode/
+.DS_Store
+
+# Логи
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

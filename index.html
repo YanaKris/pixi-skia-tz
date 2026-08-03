@@ -1,13 +1,50 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tz-pixi-skia</title>
+    <title>Pixi → Skia + векторный PDF</title>
+    <style>
+      :root {
+        font-family: system-ui, sans-serif;
+      }
+      body {
+        margin: 0;
+        padding: 16px;
+        background: #f4f4f5;
+        color: #18181b;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .controls button {
+        padding: 8px 14px;
+        border: 1px solid #d4d4d8;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .controls button:hover {
+        background: #e4e4e7;
+      }
+      .stage {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .stage canvas {
+        background: #fff;
+        border: 1px solid #d4d4d8;
+        border-radius: 6px;
+        max-width: 100%;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

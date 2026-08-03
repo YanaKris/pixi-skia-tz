@@ -1,0 +1,11 @@
+dist
+coverage
+node_modules
+wasm
+public
+build-skia
+playwright-report
+test-results
+package-lock.json
+*.pdf
+Тестовое_задание_для_разработчика.md
